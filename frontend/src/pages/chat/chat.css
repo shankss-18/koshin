@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Geomini:wght@200..800&family=Hibur+Mono&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.mainCont {
+    background-color: #0B0D11;
+    box-sizing: border-box;
+    padding: 0px;
+}
+
+.logo {
+    align-items: center;
+    border-color: #8a5a32;
+    border-radius: 9999px;
+    border-style: solid;
+    border-width: 0.8px;
+    color: #e8a05f;
+    display: flex;
+    font-family: Fraunces, serif;
+    font-size: 24px;
+    justify-content: center;
+    line-height: 32px;
+}
+
+.userMsg{
+    border-radius: 15px 0px 15px 15px;
+}
+.botMsg{
+    border-radius: 0px 15px 15px 15px;
+}
