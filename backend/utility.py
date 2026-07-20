@@ -1,6 +1,16 @@
 from groq import Groq
 import os, math, time
 
+# Cache the embedding model so it's loaded only once per process (not per request)
+_embedding_model = None
+
+def get_embedding_model():
+    global _embedding_model
+    if _embedding_model is None:
+        from langchain_huggingface import HuggingFaceEmbeddings
+        _embedding_model = HuggingFaceEmbeddings(model_name='BAAI/bge-base-en-v1.5')
+    return _embedding_model
+
 def decompose_query(query):
     groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     resp = groq_client.chat.completions.create(

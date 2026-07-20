@@ -2,8 +2,8 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
+from utility import get_embedding_model
 import os, shutil, tempfile
 from db import db
 from bson import ObjectId
@@ -47,7 +47,7 @@ def upload(chat_id):
         separators=["\n\n", "\n", ". ", " "]
     )
     chunks = text_splitter.split_documents(all_pages)
-    embedding_model = HuggingFaceEmbeddings(model_name = 'BAAI/bge-base-en-v1.5')
+    embedding_model = get_embedding_model()
     Chroma.from_documents(
             embedding=embedding_model,
             documents=chunks,

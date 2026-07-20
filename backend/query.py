@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-from utility import askQuery
+from utility import askQuery, get_embedding_model
 from db import db
 from bson import ObjectId
 from datetime import datetime
@@ -26,7 +25,7 @@ def query(chat_id):
     if not os.path.exists(persist_dir):
         return jsonify({"message":"No documents uploaded"}), 404
     
-    embedding_model = HuggingFaceEmbeddings(model_name='BAAI/bge-base-en-v1.5')
+    embedding_model = get_embedding_model()
     vector_store = Chroma(
         embedding_function=embedding_model,
         persist_directory=persist_dir,
