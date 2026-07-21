@@ -7,27 +7,22 @@ const ProtectedRoute = ({children}) => {
     const [isAuthenticated, setIsAuth] = useState(null)
 
     useEffect(() =>{
-        const checkAuth = async(retries = 3, delay = 500) =>{
+        const checkAuth = async() =>{
             try{
-                const res = await fetch(`${API_BASE}/me`, {
-                    credentials:"include"
-                })
-                if(res.ok){
-                    setIsAuth(true)
-                } else if(retries > 0){
-                    // Session cookie may not be ready yet (e.g. after login redirect)
-                    // Retry after a short delay
-                    setTimeout(() => checkAuth(retries - 1, delay), delay)
-                } else {
-                    setIsAuth(false)
+                const token = localStorage.getItem("access_token")
+                const headers = { "Content-Type": "application/json" }
+                if(token){
+                    headers["Authorization"] = `Bearer ${token}`
                 }
+
+                const res = await fetch(`${API_BASE}/me`, {
+                    credentials:"include",
+                    headers
+                })
+                setIsAuth(res.ok)
             }
             catch(err){
-                if(retries > 0){
-                    setTimeout(() => checkAuth(retries - 1, delay), delay)
-                } else {
-                    setIsAuth(false)
-                }
+                setIsAuth(false)
             }
         }
         checkAuth()
@@ -39,4 +34,4 @@ const ProtectedRoute = ({children}) => {
     return isAuthenticated ? children : <Navigate to="/login" replace/>
 }
 
-export default ProtectedRoute
+export default ProtectedRoute

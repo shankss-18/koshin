@@ -35,6 +35,12 @@ const Login = () => {
         setError(data.error || "Login Failed")
         return 
       }
+
+      // Store token in localStorage for cross-origin auth (Vercel <-> Render)
+      if(data.token){
+        localStorage.setItem("access_token", data.token)
+      }
+
       navigate('/')
     }catch(err){
       console.log("Login Error:", err)

@@ -45,7 +45,7 @@ def login():
         return jsonify({"error": "Invalid credentials"}), 401
     
     access_token = create_access_token(identity=str(user["_id"]))
-    response = jsonify({"success":True, "message":"Logged in"})
+    response = jsonify({"success":True, "message":"Logged in", "token": access_token})
     set_access_cookies(response, access_token)
 
     return response, 200
