@@ -345,6 +345,9 @@ const Chat = () => {
 
       </div>
 
+      {/* Main chat area */}
+      <div className="flex-1 flex flex-col min-w-0" style={{height: '100dvh', overflow: 'hidden'}}>
+
         {/* Chat header — shown on all screen sizes, now includes sidebar toggle */}
         <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-[#1E222B] w-full bg-[#0B0D11]">
           <div className='flex items-center min-w-0 flex-1 mr-3 gap-3'>
