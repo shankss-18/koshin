@@ -13,6 +13,7 @@ const Chat = () => {
   const [chatHistory,setChatHistory] = useState([])
   const [loadingMessages, setLoadingMessages] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const inputBarRef = useRef(null)
   const [inputBarBottom, setInputBarBottom] = useState(0)
 
@@ -298,8 +299,10 @@ const Chat = () => {
       <div className={`
         fixed lg:sticky top-0 left-0 z-30
         bg-[#12151B] w-72 lg:w-64 xl:w-72 shrink-0 border-r border-[#262B36] flex flex-col h-screen
-        transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        transition-all duration-300 ease-in-out
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${!sidebarOpen && !sidebarCollapsed ? 'lg:translate-x-0' : ''}
+        ${sidebarCollapsed ? 'lg:-translate-x-full lg:w-0 lg:border-r-0 lg:overflow-hidden' : ''}
       `}>
 
         <div className='flex items-center gap-3 border-b border-[#262B36] px-4 py-4 cursor-pointer'>  
@@ -315,6 +318,17 @@ const Chat = () => {
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/>
+              </svg>
+            </button>
+            {/* Collapse button for desktop */}
+            <button
+              className='hidden lg:block text-gray-500 hover:text-white p-1 transition-colors'
+              onClick={() => setSidebarCollapsed(true)}
+              title="Collapse sidebar"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M18 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
         </div>
@@ -368,11 +382,17 @@ const Chat = () => {
       {/* Main chat area */}
       <div className="flex-1 flex flex-col min-w-0" style={{height: '100dvh', overflow: 'hidden'}}>
 
-        {/* Mobile top bar */}
-        <div className='flex lg:hidden items-center gap-3 px-4 py-3 border-b border-[#1E222B] bg-[#0B0D11]'>
+        {/* Top bar — visible on mobile always, and on desktop when sidebar is collapsed */}
+        <div className={`items-center gap-3 px-4 py-3 border-b border-[#1E222B] bg-[#0B0D11] ${sidebarCollapsed ? 'flex' : 'flex lg:hidden'}`}>
           <button
             className='text-gray-400 hover:text-white transition-colors p-1'
-            onClick={() => setSidebarOpen(true)}
+            onClick={() => {
+              if (window.innerWidth >= 1024) {
+                setSidebarCollapsed(false)
+              } else {
+                setSidebarOpen(true)
+              }
+            }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M3 12h18M3 6h18M3 18h18" strokeLinecap="round"/>
@@ -387,7 +407,7 @@ const Chat = () => {
         {/* Chat messages */}
         {chatHistory.length > 0 && (
           <div
-            className='flex-1 flex flex-col justify-start w-full px-4 sm:px-6 py-6 sm:py-8 overflow-y-auto max-w-4xl mx-auto w-full'
+            className='flex-1 flex flex-col justify-start px-4 sm:px-6 py-6 sm:py-8 overflow-y-auto max-w-4xl mx-auto w-full'
             style={{ WebkitOverflowScrolling: 'touch', paddingBottom: `calc(80px + ${inputBarBottom}px)` }}
           >
             {chatHistory.map((ech, index) => (
@@ -442,19 +462,15 @@ const Chat = () => {
           </div>
         )}
         
-        {/* Footer input — fixed above keyboard on mobile via Visual Viewport API */}
+        {/* Footer input — sticky at bottom of chat area, centered within content */}
         <div
           ref={inputBarRef}
-          className='flex w-full justify-center px-4 sm:px-6 bg-[#0B0D11]'
+          className='flex w-full justify-center px-4 sm:px-6 bg-[#0B0D11] shrink-0'
           style={{
-            position: 'fixed',
-            left: 0,
-            right: 0,
-            bottom: inputBarBottom,
             paddingTop: '10px',
             paddingBottom: `calc(10px + env(safe-area-inset-bottom))`,
-            zIndex: 50,
-            transition: 'bottom 0.05s ease-out',
+            marginBottom: inputBarBottom > 0 ? inputBarBottom : 0,
+            transition: 'margin-bottom 0.05s ease-out',
           }}
         >
           <div className='flex items-center gap-2 w-full max-w-3xl bg-[#171A21] border border-[#2A2E38] rounded-2xl px-4 py-1 shadow-xl transition-colors focus-within:border-[#3A3E48]'>
