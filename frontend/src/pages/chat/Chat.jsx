@@ -302,7 +302,7 @@ const Chat = () => {
         transition-all duration-300 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         ${!sidebarOpen && !sidebarCollapsed ? 'lg:translate-x-0' : ''}
-        ${sidebarCollapsed ? 'lg:-translate-x-full lg:w-0 lg:border-r-0 lg:overflow-hidden' : ''}
+        ${sidebarCollapsed ? 'lg:-translate-x-full lg:w-0 xl:w-0 lg:border-r-0 lg:overflow-hidden' : ''}
       `}>
 
         <div className='flex items-center gap-3 border-b border-[#262B36] px-4 py-4 cursor-pointer'>  
