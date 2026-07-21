@@ -251,7 +251,7 @@ const Chat = () => {
 
 
   return ( 
-    <div className='mainCont flex relative' style={{height: '100dvh', overflow: 'hidden'}}>
+    <div className='mainCont flex relative w-full' style={{height: '100dvh', overflow: 'hidden'}}>
 
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
