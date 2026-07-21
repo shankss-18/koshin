@@ -13,7 +13,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, supports_credentials=True, origins=[
     "http://localhost:5173",
-    "https://koshin.vercel.app"  # ← Replace with your actual Vercel URL after deploying frontend
+    "https://koshin.vercel.app"
 ])
 from datetime import timedelta
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
