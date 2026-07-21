@@ -248,41 +248,7 @@ const Chat = () => {
     setUploading(false)
   }
 
-  /* Shared header content for both doc states */
-  const ChatHeader = ({ hasDocuments }) => (
-    <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-[#1E222B] w-full">
-      <div className='min-w-0 flex-1 mr-3'>
-        {editingTitle ? (
-          <input
-            className='text-sm sm:text-base text-[#e9e9e9] font-medium bg-transparent border-b border-[#d98c4a] outline-none w-full max-w-xs'
-            value={titleInput}
-            autoFocus
-            onChange={(e) => setTitleInput(e.target.value)}
-            onBlur={handleTitleSave}
-            onKeyDown={(e) => e.key === 'Enter' && handleTitleSave()}
-          />
-        ) : (
-          <h1
-            className='text-sm sm:text-base text-[#e9e9e9] font-medium cursor-pointer hover:underline truncate'
-            onClick={() => { setTitleInput(chatInfo.title); setEditingTitle(true) }}
-          >
-            {chatInfo.title}
-          </h1>
-        )}
-        {hasDocuments && chatInfo.files?.length > 0 && (
-          <p className='text-[10px] font-normal tracking-wide text-[#d98c4a] truncate mt-0.5 max-w-[200px] sm:max-w-sm'>{chatInfo.files.join(', ')}</p>
-        )}
-      </div>
-      <label className='flex items-center gap-1.5 text-gray-400 text-xs font-medium tracking-wide cursor-pointer hover:text-white transition-colors border border-[#2A2E38] hover:border-[#3A3E48] rounded-lg px-2.5 sm:px-3 py-1.5 shrink-0 whitespace-nowrap'>
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        <input type="file" hidden multiple accept='.pdf' required onChange={handleFileChange}/>
-        <span className='hidden sm:inline'>{hasDocuments ? 'Replace' : 'Attach'} docs</span>
-        <span className='sm:hidden'>{hasDocuments ? 'Replace' : 'Attach'}</span>
-      </label>
-    </div>
-  )
+
 
   return ( 
     <div className='mainCont flex relative' style={{height: '100dvh', overflow: 'hidden'}}>
@@ -379,35 +345,60 @@ const Chat = () => {
 
       </div>
 
-      {/* Main chat area */}
-      <div className="flex-1 flex flex-col min-w-0" style={{height: '100dvh', overflow: 'hidden'}}>
-
-        {/* Top bar — visible on mobile always, and on desktop when sidebar is collapsed */}
-        <div className={`items-center gap-3 px-4 py-3 border-b border-[#1E222B] bg-[#0B0D11] ${sidebarCollapsed ? 'flex' : 'flex lg:hidden'}`}>
-          <button
-            className='text-gray-400 hover:text-white transition-colors p-1'
-            onClick={() => {
-              if (window.innerWidth >= 1024) {
-                setSidebarCollapsed(false)
-              } else {
-                setSidebarOpen(true)
-              }
-            }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M3 12h18M3 6h18M3 18h18" strokeLinecap="round"/>
+        {/* Chat header — shown on all screen sizes, now includes sidebar toggle */}
+        <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-[#1E222B] w-full bg-[#0B0D11]">
+          <div className='flex items-center min-w-0 flex-1 mr-3 gap-3'>
+            <button
+              className={`text-gray-400 hover:text-white transition-colors p-1 shrink-0 ${sidebarCollapsed ? 'block' : 'lg:hidden'}`}
+              onClick={() => {
+                if (window.innerWidth >= 1024) {
+                  setSidebarCollapsed(false)
+                } else {
+                  setSidebarOpen(true)
+                }
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 12h18M3 6h18M3 18h18" strokeLinecap="round"/>
+              </svg>
+            </button>
+            <div className='flex flex-col min-w-0'>
+              {editingTitle ? (
+                <input
+                  className='text-sm sm:text-base text-[#e9e9e9] font-medium bg-transparent border-b border-[#d98c4a] outline-none w-full max-w-xs'
+                  value={titleInput}
+                  autoFocus
+                  onChange={(e) => setTitleInput(e.target.value)}
+                  onBlur={handleTitleSave}
+                  onKeyDown={(e) => e.key === 'Enter' && handleTitleSave()}
+                />
+              ) : (
+                <h1
+                  className='text-sm sm:text-base text-[#e9e9e9] font-medium cursor-pointer hover:underline truncate'
+                  onClick={() => { setTitleInput(chatInfo.title); setEditingTitle(true) }}
+                >
+                  {chatInfo.title}
+                </h1>
+              )}
+              {chatInfo.has_documents && chatInfo.files?.length > 0 && (
+                <p className='text-[10px] font-normal tracking-wide text-[#d98c4a] truncate mt-0.5 max-w-[200px] sm:max-w-sm'>{chatInfo.files.join(', ')}</p>
+              )}
+            </div>
+          </div>
+          <label className='flex items-center gap-1.5 text-gray-400 text-xs font-medium tracking-wide cursor-pointer hover:text-white transition-colors border border-[#2A2E38] hover:border-[#3A3E48] rounded-lg px-2.5 sm:px-3 py-1.5 shrink-0 whitespace-nowrap'>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </button>
-          <span className='text-[#e9e9e9] text-sm font-medium truncate'>{chatInfo.title}</span>
+            <input type="file" hidden multiple accept='.pdf' required onChange={handleFileChange}/>
+            <span className='hidden sm:inline'>{chatInfo.has_documents ? 'Replace' : 'Attach'} docs</span>
+            <span className='sm:hidden'>{chatInfo.has_documents ? 'Replace' : 'Attach'}</span>
+          </label>
         </div>
-
-        {/* Chat header — shown on all screen sizes */}
-        <ChatHeader hasDocuments={chatInfo.has_documents} />
 
         {/* Chat messages */}
         {chatHistory.length > 0 && (
           <div
-            className='flex-1 flex flex-col justify-start px-4 sm:px-6 py-6 sm:py-8 overflow-y-auto max-w-4xl mx-auto w-full'
+            className='flex-1 flex flex-col justify-start px-4 sm:px-6 py-6 sm:py-8 overflow-y-auto max-w-3xl mx-auto w-full'
             style={{ WebkitOverflowScrolling: 'touch', paddingBottom: `calc(80px + ${inputBarBottom}px)` }}
           >
             {chatHistory.map((ech, index) => (
