@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import './home.css'
 import { useNavigate } from 'react-router-dom';
 import API_BASE from '../../config'
+import authFetch from '../../authFetch'
 
 const Home = () => {
 
@@ -12,9 +13,7 @@ const Home = () => {
     useEffect(()=>{
         const fetchChats = async()=>{
             try{
-                const res = await fetch(`${API_BASE}/chats`, {
-                    credentials:"include"
-                })
+                const res = await authFetch(`${API_BASE}/chats`)
                 const data = await res.json()
                 setRecentChats(data)
             }catch(err){
@@ -28,18 +27,18 @@ const Home = () => {
 
     const handleLogout = async()=>{
         try {
-            const res = await fetch(`${API_BASE}/logout`,{
+            const res = await authFetch(`${API_BASE}/logout`,{
                 method:"POST",
                 headers:{
                     "Content-Type": "application/json"
-                },
-                credentials:'include'
+                }
             })
             const data = await res.json()
             if(!res.ok){
                 console.log("Logout failed")
                 return
             }
+            localStorage.removeItem("access_token")
             navigate("/login")
         } catch (err) {
             console.log(err)
@@ -48,12 +47,11 @@ const Home = () => {
 
     const handleNewChat = async()=>{
         try{
-            const res = await fetch(`${API_BASE}/chats`, {
+            const res = await authFetch(`${API_BASE}/chats`, {
                 method:"POST",
                 headers:{
                     "Content-Type": "application/json"
                 },
-                credentials:"include",
                 body: JSON.stringify({title: "New Chat"})
             })
             const data = await res.json()
@@ -73,9 +71,8 @@ const Home = () => {
         if (!confirmed) return
 
         try {
-            const res = await fetch(`${API_BASE}/chats/${chatId}`, {
-                method: "DELETE",
-                credentials: "include"
+            const res = await authFetch(`${API_BASE}/chats/${chatId}`, {
+                method: "DELETE"
             })
             if (res.ok) {
                 setRecentChats(prev => prev.filter(c => c.chat_id !== chatId))

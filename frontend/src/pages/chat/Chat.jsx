@@ -4,6 +4,7 @@ import docImage from './icons/doc-icon.png';
 import ReactMarkdown from 'react-markdown'
 import {useNavigate, useParams} from 'react-router-dom'
 import API_BASE from '../../config'
+import authFetch from '../../authFetch'
 
 const Chat = () => {
 
@@ -18,9 +19,7 @@ const Chat = () => {
   useEffect(()=>{
     const fetchMessages = async() =>{
       try{
-        const res = await fetch(`${API_BASE}/chats/${chatId}/messages`, {
-          credentials:"include"
-        })
+        const res = await authFetch(`${API_BASE}/chats/${chatId}/messages`)
         const data = await res.json()
         if (!Array.isArray(data)) {
           console.log("Unexpected response from /messages:", data)
@@ -78,9 +77,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchRecentChats = async () => {
       try {
-        const res = await fetch(`${API_BASE}/chats`, {
-          credentials: "include"
-        })
+        const res = await authFetch(`${API_BASE}/chats`)
         const data = await res.json()
         if (Array.isArray(data)) {
           setRecentChats(data)
@@ -95,9 +92,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchChatInfo = async () => {
       try {
-        const res = await fetch(`${API_BASE}/chats/${chatId}`, {
-          credentials: "include"
-        })
+        const res = await authFetch(`${API_BASE}/chats/${chatId}`)
         const data = await res.json()
         if (res.ok) {
           setChatInfo(data)
@@ -111,10 +106,9 @@ const Chat = () => {
 
   const handleNewChat = async () => {
     try {
-      const res = await fetch(`${API_BASE}/chats`, {
+      const res = await authFetch(`${API_BASE}/chats`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ title: "New Chat" })
       })
       const data = await res.json()
@@ -130,15 +124,15 @@ const Chat = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(`${API_BASE}/logout`, {
+      const res = await authFetch(`${API_BASE}/logout`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include"
+        headers: { "Content-Type": "application/json" }
       })
       if (!res.ok) {
         console.log("Logout failed")
         return
       }
+      localStorage.removeItem("access_token")
       navigate("/login")
     } catch (err) {
       console.log(err)
@@ -150,9 +144,8 @@ const Chat = () => {
     if (!confirmed) return
 
     try {
-      const res = await fetch(`${API_BASE}/chats/${chatIdToDelete}`, {
-        method: "DELETE",
-        credentials: "include"
+      const res = await authFetch(`${API_BASE}/chats/${chatIdToDelete}`, {
+        method: "DELETE"
       })
       if (res.ok) {
         setRecentChats(prev => prev.filter(c => c.chat_id !== chatIdToDelete))
@@ -174,10 +167,9 @@ const Chat = () => {
     }
 
     try {
-      const res = await fetch(`${API_BASE}/chats/${chatId}`, {
+      const res = await authFetch(`${API_BASE}/chats/${chatId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ title: trimmed })
       })
       const data = await res.json()
@@ -202,12 +194,11 @@ const Chat = () => {
     setChatHistory([...chatHistory,newChat])
     setUserquery('')
 
-    const response = await fetch(`${API_BASE}/chats/${chatId}/query`, {
+    const response = await authFetch(`${API_BASE}/chats/${chatId}/query`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      credentials:"include",
       body: JSON.stringify({
         query: userInput
       }),
@@ -244,8 +235,7 @@ const Chat = () => {
     const formData = new FormData()
     selectedFiles.forEach(file => formData.append('files',file))
 
-    const response = await fetch(`${API_BASE}/chats/${chatId}/upload`, {
-      credentials:"include",
+    const response = await authFetch(`${API_BASE}/chats/${chatId}/upload`, {
       method:"POST",
       body: formData,
     })

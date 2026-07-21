@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { Navigate } from 'react-router-dom'
 import API_BASE from '../../config'
+import authFetch from '../../authFetch'
 
 const ProtectedRoute = ({children}) => {
 
@@ -9,16 +10,7 @@ const ProtectedRoute = ({children}) => {
     useEffect(() =>{
         const checkAuth = async() =>{
             try{
-                const token = localStorage.getItem("access_token")
-                const headers = { "Content-Type": "application/json" }
-                if(token){
-                    headers["Authorization"] = `Bearer ${token}`
-                }
-
-                const res = await fetch(`${API_BASE}/me`, {
-                    credentials:"include",
-                    headers
-                })
+                const res = await authFetch(`${API_BASE}/me`)
                 setIsAuth(res.ok)
             }
             catch(err){
@@ -34,4 +26,5 @@ const ProtectedRoute = ({children}) => {
     return isAuthenticated ? children : <Navigate to="/login" replace/>
 }
 
-export default ProtectedRoute
+export default ProtectedRoute
+
