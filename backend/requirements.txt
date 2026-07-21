@@ -11,6 +11,5 @@ langchain-huggingface
 langchain-chroma
 langchain-text-splitters
 pypdf
-sentence-transformers
 chromadb
 gunicorn

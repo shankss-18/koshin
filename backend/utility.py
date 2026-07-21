@@ -7,8 +7,12 @@ _embedding_model = None
 def get_embedding_model():
     global _embedding_model
     if _embedding_model is None:
-        from langchain_huggingface import HuggingFaceEmbeddings
-        _embedding_model = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
+        from langchain_huggingface import HuggingFaceEndpointEmbeddings
+        # API-based embeddings — no local model, no torch, no 2GB download
+        _embedding_model = HuggingFaceEndpointEmbeddings(
+            model="sentence-transformers/all-MiniLM-L6-v2",
+            huggingfacehub_api_token=os.getenv("HF_API_TOKEN")
+        )
     return _embedding_model
 
 def decompose_query(query):
