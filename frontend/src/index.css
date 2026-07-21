@@ -5,8 +5,24 @@
 * {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE / Edge */
+  box-sizing: border-box;
 }
 
 *::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
+}
+
+/* Fix mobile viewport — prevents white space when keyboard opens */
+html, body {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+#root {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
 }

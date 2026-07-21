@@ -271,7 +271,7 @@ const Chat = () => {
   )
 
   return ( 
-    <div className='min-h-screen mainCont flex relative'>
+    <div className='mainCont flex relative' style={{height: '100dvh', overflow: 'hidden'}}>
 
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
@@ -353,7 +353,7 @@ const Chat = () => {
       </div>
 
       {/* Main chat area */}
-      <div className="flex-1 flex flex-col h-screen min-w-0">
+      <div className="flex-1 flex flex-col min-w-0" style={{height: '100dvh', overflow: 'hidden'}}>
 
         {/* Mobile top bar */}
         <div className='flex lg:hidden items-center gap-3 px-4 py-3 border-b border-[#1E222B] bg-[#0B0D11]'>
@@ -368,19 +368,12 @@ const Chat = () => {
           <span className='text-[#e9e9e9] text-sm font-medium truncate'>{chatInfo.title}</span>
         </div>
 
-        {/* Desktop header */}
-        <div className='hidden lg:block'>
-          <ChatHeader hasDocuments={chatInfo.has_documents} />
-        </div>
-
-        {/* Mobile doc header (attach/replace label only) */}
-        <div className='lg:hidden'>
-          <ChatHeader hasDocuments={chatInfo.has_documents} />
-        </div>
+        {/* Chat header — shown on all screen sizes */}
+        <ChatHeader hasDocuments={chatInfo.has_documents} />
 
         {/* Chat messages */}
         {chatHistory.length > 0 && (
-          <div className='flex-1 flex flex-col justify-start w-full px-4 sm:px-6 py-6 sm:py-8 overflow-y-auto border-b border-[#262B36] max-w-4xl mx-auto w-full'>
+          <div className='flex-1 flex flex-col justify-start w-full px-4 sm:px-6 py-6 sm:py-8 overflow-y-auto border-b border-[#262B36] max-w-4xl mx-auto w-full' style={{WebkitOverflowScrolling: 'touch'}}>
             {chatHistory.map((ech, index) => (
               <div className='flex flex-col mb-6 sm:mb-8' key={index}>
                 <p className='bg-[#2A2E38] px-3 sm:px-4 py-2.5 rounded-2xl text-gray-200 text-[13px] sm:text-[14px] self-end mb-4 max-w-[85%] sm:max-w-xl'>{ech.user}</p>
@@ -434,7 +427,7 @@ const Chat = () => {
         )}
         
         {/* Footer input */}
-        <div className='flex py-4 sm:py-6 w-full justify-center bg-transparent px-4 sm:px-6'>
+        <div className='flex py-3 sm:py-4 w-full justify-center bg-[#0B0D11] px-4 sm:px-6' style={{paddingBottom: 'calc(12px + env(safe-area-inset-bottom))'}}>
           <div className='flex items-center gap-2 w-full max-w-3xl bg-[#171A21] border border-[#2A2E38] rounded-2xl px-4 py-1 shadow-lg transition-colors focus-within:border-[#3A3E48]'>
             <input
               id='inputBox'
