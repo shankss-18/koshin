@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './chat.css'
 import docImage from './icons/doc-icon.png';
 import ReactMarkdown from 'react-markdown'
@@ -12,6 +12,8 @@ const Chat = () => {
   const [chatHistory,setChatHistory] = useState([])
   const [loadingMessages, setLoadingMessages] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const inputBarRef = useRef(null)
+  const [inputBarBottom, setInputBarBottom] = useState(0)
 
   useEffect(()=>{
     const fetchMessages = async() =>{
@@ -47,6 +49,27 @@ const Chat = () => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [chatHistory])
+
+  // Visual Viewport API — pins input bar exactly above keyboard on mobile
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+
+    const updateBarPosition = () => {
+      // bottom offset = how much the keyboard has pushed the viewport up
+      const bottom = window.innerHeight - vv.height - vv.offsetTop
+      setInputBarBottom(Math.max(0, bottom))
+    }
+
+    vv.addEventListener('resize', updateBarPosition)
+    vv.addEventListener('scroll', updateBarPosition)
+    updateBarPosition()
+
+    return () => {
+      vv.removeEventListener('resize', updateBarPosition)
+      vv.removeEventListener('scroll', updateBarPosition)
+    }
+  }, [])
 
   const [userQuery, setUserquery] = useState('')
   const chatEndRef = React.useRef(null)
@@ -373,7 +396,10 @@ const Chat = () => {
 
         {/* Chat messages */}
         {chatHistory.length > 0 && (
-          <div className='flex-1 flex flex-col justify-start w-full px-4 sm:px-6 py-6 sm:py-8 overflow-y-auto border-b border-[#262B36] max-w-4xl mx-auto w-full' style={{WebkitOverflowScrolling: 'touch'}}>
+          <div
+            className='flex-1 flex flex-col justify-start w-full px-4 sm:px-6 py-6 sm:py-8 overflow-y-auto max-w-4xl mx-auto w-full'
+            style={{ WebkitOverflowScrolling: 'touch', paddingBottom: `calc(80px + ${inputBarBottom}px)` }}
+          >
             {chatHistory.map((ech, index) => (
               <div className='flex flex-col mb-6 sm:mb-8' key={index}>
                 <p className='bg-[#2A2E38] px-3 sm:px-4 py-2.5 rounded-2xl text-gray-200 text-[13px] sm:text-[14px] self-end mb-4 max-w-[85%] sm:max-w-xl'>{ech.user}</p>
@@ -408,14 +434,14 @@ const Chat = () => {
         )}
 
         {chatHistory.length === 0 && uploading === false && (
-          <div className='flex-1 flex flex-col justify-center items-center border-b border-[#262B36] w-full px-6 text-center'>
+          <div className='flex-1 flex flex-col justify-center items-center w-full px-6 text-center' style={{paddingBottom: `calc(80px + ${inputBarBottom}px)`}}>
             <h2 className='text-lg sm:text-xl text-[#e9e9e9] font-medium mb-3'>Ask your document anything</h2>
             <p className='text-sm max-w-sm sm:max-w-md font-normal tracking-wide text-gray-500'>Attach a PDF above, then ask a question. Answers are grounded only in what's in the document.</p>
           </div> 
         )}
 
         {uploading === true && (
-          <div className='flex-1 flex flex-col justify-center items-center border-b border-[#262B36] w-full px-6 text-center'>
+          <div className='flex-1 flex flex-col justify-center items-center w-full px-6 text-center' style={{paddingBottom: `calc(80px + ${inputBarBottom}px)`}}>
             <div className='flex gap-1.5 mb-4'>
               <span className='w-2 h-2 bg-[#d98c4a] rounded-full animate-bounce [animation-delay:-0.3s]'></span>
               <span className='w-2 h-2 bg-[#d98c4a] rounded-full animate-bounce [animation-delay:-0.15s]'></span>
@@ -426,9 +452,22 @@ const Chat = () => {
           </div>
         )}
         
-        {/* Footer input */}
-        <div className='flex py-3 sm:py-4 w-full justify-center bg-[#0B0D11] px-4 sm:px-6' style={{paddingBottom: 'calc(12px + env(safe-area-inset-bottom))'}}>
-          <div className='flex items-center gap-2 w-full max-w-3xl bg-[#171A21] border border-[#2A2E38] rounded-2xl px-4 py-1 shadow-lg transition-colors focus-within:border-[#3A3E48]'>
+        {/* Footer input — fixed above keyboard on mobile via Visual Viewport API */}
+        <div
+          ref={inputBarRef}
+          className='flex w-full justify-center px-4 sm:px-6 bg-[#0B0D11]'
+          style={{
+            position: 'fixed',
+            left: 0,
+            right: 0,
+            bottom: inputBarBottom,
+            paddingTop: '10px',
+            paddingBottom: `calc(10px + env(safe-area-inset-bottom))`,
+            zIndex: 50,
+            transition: 'bottom 0.05s ease-out',
+          }}
+        >
+          <div className='flex items-center gap-2 w-full max-w-3xl bg-[#171A21] border border-[#2A2E38] rounded-2xl px-4 py-1 shadow-xl transition-colors focus-within:border-[#3A3E48]'>
             <input
               id='inputBox'
               type="text"
