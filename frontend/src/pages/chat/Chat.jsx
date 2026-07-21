@@ -264,11 +264,10 @@ const Chat = () => {
       {/* SideBar */}
       <div className={`
         fixed lg:sticky top-0 left-0 z-30
-        bg-[#12151B] w-72 lg:w-64 xl:w-72 shrink-0 border-r border-[#262B36] flex flex-col h-screen
+        bg-[#12151B] flex flex-col h-screen border-r border-[#262B36]
         transition-all duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        ${!sidebarOpen && !sidebarCollapsed ? 'lg:translate-x-0' : ''}
-        ${sidebarCollapsed ? 'lg:-translate-x-full lg:w-0 xl:w-0 lg:border-r-0 lg:overflow-hidden' : ''}
+        ${sidebarCollapsed ? 'lg:w-0 lg:min-w-0 lg:opacity-0 lg:overflow-hidden lg:border-r-0 lg:p-0' : 'w-72 lg:w-64 xl:w-72 shrink-0'}
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
 
         <div className='flex items-center gap-3 border-b border-[#262B36] px-4 py-4 cursor-pointer'>  
